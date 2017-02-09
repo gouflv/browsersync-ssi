@@ -2,7 +2,7 @@ module.exports = function browserSyncSSI(opt) {
 
   'use strict';
 
-  var ssi = require('ssi');
+  var ssi = require('node-ssi');
   var path = require('path');
   var fs = require('fs');
   var url = require('url');
@@ -26,7 +26,7 @@ module.exports = function browserSyncSSI(opt) {
       }
   }
 
-  var parser = new ssi(baseDir, baseDir, matcher);
+  var parser = new ssi({ baseDir: baseDir});
 
   return function(req, res, next) {
 
@@ -35,9 +35,9 @@ module.exports = function browserSyncSSI(opt) {
 
     if (filename.indexOf(ext) > -1 && fs.existsSync(filename)) {
 
-      var contents = parser.parse(filename, fs.readFileSync(filename, {
+      var contents = parser.compile(fs.readFileSync(filename, {
         encoding: 'utf8'
-      })).contents;
+      }));
 
       //TODO inject more elegant using regexp
       contents = contents.replace(/<\/head>/, '<script async src="' + bsURL + '"></script></head>');
